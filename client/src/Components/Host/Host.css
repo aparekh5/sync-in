@@ -1,0 +1,11 @@
+.textInput {
+    width: 30vh;
+}
+
+#linkTag {
+    text-decoration: none;
+    border: 1px solid gray;
+    background-color: aqua;
+    font-size: 5vh;
+}
+
