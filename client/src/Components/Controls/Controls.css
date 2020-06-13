@@ -1,0 +1,42 @@
+.controls {
+    border-radius: 15px;
+    background-color: #212121;
+    height: 100%;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.text {
+    width: 80%;
+}
+
+.addToQueue {
+    width: 50%;
+    display: flex;
+}
+.btn {
+    align-self: flex-end;
+}
+
+
+.playButtons {
+    width: 50%;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+@media screen and (max-width: 1245px) {
+    .addToQueue {
+        width: 90%;
+        display: flex;
+    }
+    .playButtons {
+        width: 90%;
+        display: flex;
+        
+        justify-content: space-evenly;
+    }
+}
