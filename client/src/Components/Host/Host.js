@@ -71,7 +71,7 @@ class Host extends Component {
 
     
     componentWillMount() {
-        this.socket = io('http://localhost:5000')
+        this.socket = io('https://syncin-server.herokuapp.com')
     }
 
 

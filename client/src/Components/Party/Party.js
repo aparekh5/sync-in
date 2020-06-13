@@ -58,7 +58,7 @@ export default class Party extends Component {
     }
 
     async componentDidMount() {
-        this.socket = io('http://localhost:5000');
+        this.socket = io('https://syncin-server.herokuapp.com');
         this.socket.emit('new connection', this.state.id, (value) => {
             if (!value) {
                 this.setState({error404: true});
