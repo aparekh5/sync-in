@@ -1,0 +1,230 @@
+
+.nameform-wrapper {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100vh;
+    width: 100%;
+    background-color: #121212;
+}
+
+.nameform {
+    border-radius: 5px;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    border: 5px solid #535353;
+
+}
+
+.userName {
+    width: 30vh;
+    margin: 20px 30px 20px 30px;
+}
+
+.button {
+    margin: 20px 30px 20px 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+
+
+.container {
+    display: grid;
+    grid-template-columns: repeat(15, 1fr);
+    grid-template-rows: repeat(10, 1fr);
+    height: 95vh;
+}
+
+.videoPlayer {
+    background-color: #212121;
+    grid-column-start: 1;
+    grid-column-end: 12;
+    grid-row-start: 1;
+    grid-row-end: 8;
+    padding: 20px;
+}
+
+body {
+    background-color: #212121;
+}
+
+.chat-container {
+    grid-column-start: 12;
+    grid-column-end: 16;
+    grid-row: 1 / 8;
+    background-color: #212121;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: #212121;
+    border-radius: 8px;
+    height: 100%;
+    width: 35vh;
+}
+
+.invitebutton-wrapper {
+    grid-column-start: 12;
+    grid-column-end: -1;
+    grid-row-start: 8;
+    grid-row-end: -1;
+}
+
+.controls-wrapper {
+    grid-row-start: 8;
+    grid-row-end: -1;
+    grid-column: 1 / 12;
+    background-color: #212121;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    padding-left: 40px;
+    padding-right: 40px;
+}
+
+
+  
+
+  @media screen and (max-width: 1245px) {
+     .container {
+        display: grid;
+        grid-template-columns: repeat(10, 1fr);
+        grid-template-rows: repeat(10, 1fr);
+        height: 150vh;
+     }
+
+     .videoPlayer {
+        background-color: #212121;
+        grid-column-start: 1;
+        grid-column-end: -1;
+        grid-row-start: 1;
+        grid-row-end: 4;
+        padding: 20px;
+    }
+
+    .chat-container {
+        grid-column-start: 6;
+        grid-column-end: -1;
+        grid-row: 4 / 7;
+        background-color: #212121;
+        width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        background: #212121;
+        border-radius: 8px;
+        height: 100%;
+        width: 35vh;
+     }
+    .controls-wrapper {
+        grid-row-start: 4;
+        grid-row-end: 7;
+        grid-column: 1 / 6;
+        background-color: #212121;
+        padding-top: 0px;
+        padding-bottom: 0px;
+        padding-left: 0px;
+        padding-right: 0px;
+    }
+    .invitebutton-wrapper {
+        grid-row-start: 6;
+        grid-row-end: 8;
+        grid-column: 1 / 6;
+        align-self: center;
+
+    }
+    
+  }
+
+
+
+  @media screen and (max-width: 1245px) {
+    .container {
+       display: grid;
+       grid-template-columns: repeat(10, 1fr);
+       grid-template-rows: repeat(9, 1fr);
+       height: 120vh;
+    }
+
+    .videoPlayer {
+       background-color: #212121;
+       grid-column-start: 1;
+       grid-column-end: -1;
+       grid-row-start: 1;
+       grid-row-end: 6;
+       padding: 20px;
+   }
+
+   .chat-container {
+       grid-column-start: 6;
+       grid-column-end: -1;
+       grid-row: 6 / -1;
+       background-color: #212121;
+       width: 100%;
+       margin-left: auto;
+       margin-right: auto;
+       display: flex;
+       flex-direction: column;
+       justify-content: space-between;
+       background: #212121;
+       border-radius: 8px;
+       height: 100%;
+       width: 35vh;
+    }
+   .controls-wrapper {
+       grid-row-start: 6;
+       grid-row-end: 9;
+       grid-column: 1 / 6;
+       background-color: #212121;
+       padding-top: 0px;
+       padding-bottom: 0px;
+       padding-left: 0px;
+       padding-right: 0px;
+   }
+   .invitebutton-wrapper {
+       margin-top: auto;
+       margin-bottom: auto;
+       grid-row-start: -2;
+       grid-row-end: -1;
+       grid-column: 1 / 6;
+       align-self: center;
+
+   }
+   
+ }
+
+ @media screen and (max-width: 650px) {
+     .container {
+         display: grid;
+         grid-template-columns: repeat(10, 1fr);
+         grid-template-rows: repeat(10, 1fr);
+         flex-direction: column;
+     }
+
+     .videoPlayer {
+         grid-column: 1 / -1;
+         grid-row: 1 / 4;
+     }
+     .controls-wrapper {
+        grid-column: 1 / -1;
+        grid-row: 4 / 6;
+    }
+     .chat-container {
+        grid-column: 1 / -1;
+        grid-row: 6 / 10;
+        width: 90%;
+        border: 1px solid #5f5f5f;
+     }
+     .invitebutton-wrapper {
+        grid-column: 1 / -1;
+        grid-row: 10 / 11;     
+    }
+ }
