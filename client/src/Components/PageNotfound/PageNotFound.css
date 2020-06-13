@@ -1,0 +1,41 @@
+.error-404 {
+    display: flex;
+}
+
+.error-404-wrapper {
+    height: 95vh;
+    background-color: #212121;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.errorcode{
+    height: 5vh;
+    font-family: 'Roboto', 'Poppins';
+    font-weight: 100;
+    font-size: 28px;
+    padding-right: 40px;
+    border-right: 1px solid white;    
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+
+
+
+.description {
+margin-left: 40px;
+    display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+    height: 5vh;
+    font-family: 'Roboto', 'Poppins';
+    font-weight: 100;
+    font-size: 28px;
+
+}
