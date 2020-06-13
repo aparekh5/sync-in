@@ -1,0 +1,12 @@
+.input-wrapper  {
+    width: 95%;
+    display: flex;
+    margin: auto;
+}
+
+.textField {
+    width: 90%;
+}
+.btn-icon {
+    width: 10%;
+}

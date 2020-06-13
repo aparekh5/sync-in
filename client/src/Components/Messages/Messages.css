@@ -1,0 +1,15 @@
+.messages {
+  
+    padding: 5% 0;
+    overflow: auto;
+    overflow-y: scroll;
+    flex: auto;
+    width: 100%;
+    height: 39vh;
+    scrollbar-color: #212121;
+    -ms-overflow-style: none;
+
+  }
+  .messages::-webkit-scrollbar {
+    display: none;
+  }
