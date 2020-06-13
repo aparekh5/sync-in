@@ -11,11 +11,13 @@ const PORT = process.env.PORT || 5000;
 const cors = require('cors')
 mongoose.connect(process.env.DB_URI, {useNewUrlParser: true, useUnifiedTopology: true})
 mongoose.set('useFindAndModify', false);
+const router = require('./router');
+
 
 
  
 app.use(cors());
-
+app.use(router);
 
 io.on('connect', (socket) => {
     console.log('New Connection');
