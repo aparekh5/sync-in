@@ -31,6 +31,8 @@ class App extends Component {
             <Switch>
             <Route path="/" exact 
             render={() => <Host setHostTrue={this.setHostTrue}/>}/>
+            <Route path='/home' exact
+            component={HomePage}/>
             <Route path='/bug' exact component ={reportBug} />
             <Route path="/party" 
             render={(props) =>  <Party {...props} prop isHost={this.state.host}/>}/>

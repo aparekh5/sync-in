@@ -44,7 +44,7 @@ class Host extends Component {
             this.setState({videoLinkError: false});
             this.setState({videoLinkHelperText: 'Please enter a valid video link'});
         }
-        if (this.state.hostName.trim() == '') {
+        if (this.state.hostName.trim() == '' || this.state.hostName.toLowerCase().trim() == 'admin') {
             event.preventDefault();
             this.setState({userNameError: true});
             this.setState({userNameHelperText: 'Invalid Name'});
@@ -71,7 +71,10 @@ class Host extends Component {
 
     
     componentWillMount() {
-        this.socket = io('https://syncin-server.herokuapp.com')
+        
+    //https://syncin-server.herokuapp.com
+    //http://localhost:5000
+        this.socket = io('http://localhost:5000')
     }
 
 

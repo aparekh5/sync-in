@@ -1,13 +1,16 @@
 .invitelink-wrapper {
-    height: 100%;
     display: flex;
-    justify-content: center;
-    margin-top: 50px;
 }
 
 @media screen and (max-width: 1245px) {
     .invitelink-wrapper {
         margin-top: auto;
         margin-bottom: auto;
+    }
+}
+
+@media screen and (max-width: 650px) {
+    .invitelink-wrapper {
+        margin-bottom: 20px;
     }
 }
