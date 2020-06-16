@@ -28,7 +28,7 @@ io.on('connect', (socket) => {
             hostName: data.hostName,
             userEditAccess: data.userEditAccess,
             vidNum: 0,
-            users: [data.hostName],
+            users: [{'host' : data.hostName}],
             lastPlayBack: 0
         })
         session.save((err) => {
@@ -80,7 +80,6 @@ io.on('connect', (socket) => {
                 users: video_session.users, 
                 playBack: video_session.lastPlayBack
             }
-            console.log(sessionDetails.hostName + ' hosss');
 
             socket.join(video_session._id);
             io.in(video_session._id).emit('session details', sessionDetails);
@@ -119,6 +118,16 @@ io.on('connect', (socket) => {
         socket.broadcast.to(id).emit('add video', videoLinks);
     });
 
+    socket.on('give user edit access', (id, value, playBack) => {
+        SessionModel.findOneAndUpdate({_id: id}, {userEditAccess: value}, {
+            new: true
+        }, 
+        (err) => {
+            if (err) throw err
+        });
+        socket.broadcast.to(id).emit('edit access', value, playBack);
+    });
+
     socket.on('playPrev', (id, videoNum) => {
 
         SessionModel.findOneAndUpdate({_id: id}, {vidNum: videoNum}, {
@@ -154,10 +163,32 @@ io.on('connect', (socket) => {
         socket.broadcast.to(id).emit('next video', videoNum);
     });
 
-
+    socket.on('disconnecting', () => {
+        if (Object.keys(socket.rooms).length > 1) {
+            let room_id = Object.keys(socket.rooms)[1];
+            SessionModel.findById( room_id, (err, session) => {
+                if (err) throw err;
+                video_session = session;
+                let users = video_session.users;
+                let current_user = users.filter((user) => {
+                    return Object.keys(user)[0] == socket.id
+                })
+                let name = '';
+                if  (current_user.length == 0) {
+                    current_user = users.filter((user) => {
+                        return Object.keys(user)[0] == 'host'
+                    })
+                    name  = current_user[0]['host'];
+                } else {
+                    name  = current_user[0][socket.id];
+                }
+                io.to(room_id).emit('chat message', {user: 'admin', message: `${name} has Disconnected`})
+            })
+        }
+    })
 
     socket.on('disconnect', (id, users) => {
-        console.log('Disconnected')
+        console.log('Disconnected');
     })
 });
 
