@@ -13,7 +13,7 @@ import {Redirect} from 'react-router-dom'
 import InviteLink from '../InviteLink/InviteLink'
 import { makeStyles } from '@material-ui/core/styles';
 import Controls from '../Controls/Controls'
-
+import EditAccess from '../Host specific controls/EditAccess/EditAccess'
 const darkTheme = createMuiTheme({
     palette: {
       type: 'dark',
@@ -49,6 +49,7 @@ export default class Party extends Component {
             users: [],
             messages:[],
             message: '',
+            hasControls: true
         }
         this.lastPausePlayBack = 0;
         
@@ -58,7 +59,9 @@ export default class Party extends Component {
     }
 
     async componentDidMount() {
-        this.socket = io('https://syncin-server.herokuapp.com');
+    //https://syncin-server.herokuapp.com
+    //http://localhost:5000
+        this.socket = io('http://localhost:5000');
         this.socket.emit('new connection', this.state.id, (value) => {
             if (!value) {
                 this.setState({error404: true});
@@ -68,7 +71,6 @@ export default class Party extends Component {
             this.setState({hostName: sessionDetails.hostName});
             this.setState({videoLink: sessionDetails.videoLink});
             this.setState({userEditAccess: sessionDetails.userEditAccess});
-            console.log('VIDEO nUM : ', sessionDetails.vidNum);
             this.setState({videoNum: sessionDetails.vidNum})
             this.setState({users: sessionDetails.users})
             this.setState({loaded: true});
@@ -76,6 +78,7 @@ export default class Party extends Component {
                 this.setState({userName: sessionDetails.hostName});
                 this.setState({userNameExist: true});
             }
+            this.setState({hasControls: this.state.isHost || this.state.userEditAccess});
             this.lastPlayBack = sessionDetails.playBack;
         });
 
@@ -88,12 +91,10 @@ export default class Party extends Component {
         this.socket.on('recieve message', (message) => {
             let current_messages = [...this.state.messages, message];
             this.setState({messages : current_messages});
-            console.log(this.state.messages)
         });
 
         this.socket.on('add video', (videoLinks) => {
             this.setState({videoLink: videoLinks});
-            console.log('video added', videoLinks)
         });
 
         this.socket.on('next video', () => { 
@@ -109,7 +110,7 @@ export default class Party extends Component {
         });
 
         this.socket.on('onSeek Media', (timePassed) => {
-            if (timePassed != null) {
+            if (timePassed != null && this.state.userNameExist) {
                  this.vidPlayerRef.current.seekTo(timePassed, 'seconds')
             }
         });
@@ -117,7 +118,7 @@ export default class Party extends Component {
         this.socket.on('play/pause', (playPause, timePassed) => {
             this.startTime = new Date();
             this.setState({shouldPlay:playPause})
-            if (timePassed!=null) {
+            if (timePassed!=null && this.state.userNameExist) {
                 this.vidPlayerRef.current.seekTo(timePassed, 'seconds')
             }
         });
@@ -125,18 +126,26 @@ export default class Party extends Component {
         this.socket.on('add user', (users) => {
             this.setState({users : users});
         })
+        this.socket.on('edit access', (value, playBack) => {
+            this.setState({shouldPlay: true})
+            this.setState({userEditAccess: value});
+            this.setState({hasControls: this.state.isHost || this.state.userEditAccess});
+            this.lastPlayBack = playBack;
+            this.vidPlayerRef.current.seekTo(playBack, 'seconds');
+        })
     }
     
     checkSeeked = () => {
-        if (this.vidPlayerRef.current.getCurrentTime() - this.lastPausePlayBack > 0.5) {
-            this.seekMedia();
+        if (this.vidPlayerRef.current != null){
+            if (this.vidPlayerRef.current.getCurrentTime() - this.lastPausePlayBack > 0.5) {
+                this.seekMedia();
+            }
         }
     }
 
     //If you want to play pass true if you want to pause pass false
     playPauseMedia = (playPause, timePassed) => {
         if ((this.props.isHost || this.state.userEditAccess) && (!playPause)) {
-            console.log('paused')
             this.lastPausePlayBack = timePassed;
             this.interval = setInterval(this.checkSeeked, 500);
         } else if ((this.props.isHost || this.state.userEditAccess) && (playPause) && this.interval != null) {
@@ -197,22 +206,23 @@ export default class Party extends Component {
     }
 
     joinSession = () => {
-        if (this.state.userName.trim() == '') {
+        if (this.state.userName.trim() == '' || this.state.userName.toLowerCase().trim() == 'admin') {
             this.setState({userNameError: true});
             this.setState({userNameHelperText: 'Invalid Name'});
             console.log('error')
         } else {
-            console.log(this.state.users)
             this.setState({userNameExist: true})
-            console.log(this.state.userName)
             let current_users = this.state.users;
-            current_users.push(this.state.userName);
-            console.log(current_users)
+            let userName = {
+                [this.socket.id] : this.state.userName
+            }
+            current_users.push(userName);
 
             this.setState({users : current_users});
             this.socket.emit('new user', this.state.id, current_users, this.state.userName, function(playback) {
                 this.lastPlayBack = playback;
             });
+
         }
 
         
@@ -251,10 +261,16 @@ export default class Party extends Component {
     }
 
     vidLoaded = () => {
-        
         this.vidPlayerRef.current.seekTo(this.lastPlayBack, 'seconds' )
     }
 
+    //Functions which gives the user emit access
+    // True gives it and False takes it
+    giveUserEditAccess = (value) => {
+        this.setState({userEditAccess: value});        
+        this.setState({hasControls: this.state.isHost || this.state.userEditAccess});
+        this.socket.emit('give user edit access',this.state.id ,value, this.vidPlayerRef.current.getCurrentTime());
+    }
 
     render() {
 
@@ -286,7 +302,14 @@ export default class Party extends Component {
             return (
                 <div className='container'>  
                     <div className="videoPlayer">
-                        <ReactPlayer width='100%' height='100%' onReady={() => this.vidLoaded()} ref={this.vidPlayerRef} url={this.state.videoLink[this.state.videoNum]} controls={this.props.isHost || this.state.userEditAccess} playing={this.state.shouldPlay} onPlay={() =>this.playPauseMedia(true, this.vidPlayerRef.current.getCurrentTime())} onPause={() => this.playPauseMedia(false,  this.vidPlayerRef.current.getCurrentTime())} />
+                        {(this.state.isHost || this.state.userEditAccess) && (
+                            <ReactPlayer width='100%' height='100%' onReady={() => this.vidLoaded()} ref={this.vidPlayerRef} url={this.state.videoLink[this.state.videoNum]} controls={true} playing={this.state.shouldPlay} onPlay={() =>this.playPauseMedia(true, this.vidPlayerRef.current.getCurrentTime())} onPause={() => this.playPauseMedia(false,  this.vidPlayerRef.current.getCurrentTime())}
+                            />
+                        )}
+                        {(!(this.state.isHost || this.state.userEditAccess)) && (
+                            <ReactPlayer width='100%' height='100%' onReady={() => this.vidLoaded()} ref={this.vidPlayerRef} url={this.state.videoLink[this.state.videoNum]} controls={false} playing={this.state.shouldPlay} onPlay={() =>this.playPauseMedia(true, this.vidPlayerRef.current.getCurrentTime())} onPause={() => this.playPauseMedia(false,  this.vidPlayerRef.current.getCurrentTime())}
+                            />
+                        )}
                     </div>
                     <MuiThemeProvider theme={darkTheme}>
 
@@ -301,11 +324,14 @@ export default class Party extends Component {
                         <Controls playPrevious={this.playPreviousVideo} playNext={this.playNextVideo} 
                         nextVidLink={this.state.nextVideoLink} setChangeVid={this.setNextVideoLink}
                         vidLinkError={this.state.videoLinkError} helperText={this.state.videoLinkHelperText}
-                        addQueue={this.addToQueue}/>
+                        addQueue={this.addToQueue} />
                     )}
                     </div>
                     <div className="invitebutton-wrapper">
-                        <InviteLink />    
+                        <InviteLink />
+                        {(this.state.isHost) && (
+                            <EditAccess userHasEditAccess={this.state.userEditAccess} editAccessHandler={this.giveUserEditAccess}/>
+                        )}
                     </div> 
                     </MuiThemeProvider>
              

@@ -1,0 +1,12 @@
+.editaccess-wrapper {
+    display: flex;
+}
+
+
+
+
+@media screen and (max-width: 650px) {
+    .editaccess-wrapper {
+        margin-bottom: 20px;
+    }
+}
