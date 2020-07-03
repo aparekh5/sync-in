@@ -29,7 +29,8 @@ io.on('connect', (socket) => {
             userEditAccess: data.userEditAccess,
             vidNum: 0,
             users: [{'host' : data.hostName}],
-            lastPlayBack: 0
+            lastPlayBack: 0,
+            usersInCall: []
         })
         session.save((err) => {
             console.log(err)
@@ -57,10 +58,81 @@ io.on('connect', (socket) => {
 
     });
 
-    socket.on('send message', (id, user, message) => {
+// Changes start
+
+    // Changes start
+    socket.on('join call', (roomId, name) => {
+        console.log('New User ', name)
+
+        SessionModel.findById(roomId, (err, session, callback) => {
+            if (err) throw err;
+            let users = session.usersInCall;
+            if (users.length === 10) {
+                return;
+            }
+            let userObject = { 'id' : socket.id, 'name' : name};
+            users.push(userObject);
+            SessionModel.findOneAndUpdate({_id: roomId}, {usersInCall: users}, {
+                new: true
+            }, 
+            (err) => {
+                if (err) throw err
+            });
+
+            const usersInThisRoom = users.filter(user => {
+                return user['id'] !== socket.id;
+            });
+            console.log(usersInThisRoom);
+            io.to(socket.id).emit("all users", usersInThisRoom);
+            
+        })
+    })
+
+    socket.on('sending signal', payload => {
+        console.log('Sending Signal',payload['userToSignal'] );
+
+        io.to(payload['userToSignal']).emit('user joined', {
+            'signal': payload['signal'],
+            'callerId': payload['callerId']
+        });
+    })
+
+    socket.on('returning signal', payload => {
+        console.log('forwarding signal ',payload['callerId'])
+        io.to(payload['callerId']).emit('receiving returned signal', {
+            'signal' : payload['signal'],
+            'id': socket.id
+        });
+        
+    })
+
+    socket.on('leaving call room', (roomId, id, usersToSignal) => {
+        console.log('left call');
+        usersToSignal.forEach(user => {
+            io.to(user['peerId']).emit('remove user', id);
+        });
+        SessionModel.findById(roomId, (err, session, callback) => {
+            if (err) throw err;
+            let users = session.usersInCall;
+            let newUserList = users.filter((user) => {
+                return user.id !== id; 
+            });
+            SessionModel.findOneAndUpdate({_id: roomId}, {usersInCall: newUserList}, {
+                new: true
+            }, 
+            (err) => {
+                if (err) throw err
+            });
+        })
+    });
+
+
+//changes end
+
+socket.on('send message', (id, user, message) => {
         socket.broadcast.to(id).emit('recieve message', {user : user, message: message});
     });
-/**/ 
+
 
     socket.on('new connection', (id, confirmation) => {
         let video_session = null;
@@ -178,7 +250,9 @@ io.on('connect', (socket) => {
                     current_user = users.filter((user) => {
                         return Object.keys(user)[0] == 'host'
                     })
-                    name  = current_user[0]['host'];
+                    if (current_user) { 
+                        name  = current_user[0]['host'];
+                    }
                 } else {
                     name  = current_user[0][socket.id];
                 }

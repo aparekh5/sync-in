@@ -8,8 +8,8 @@ const Session = new Schema({
     userEditAccess: { type: Boolean, default:false},
     vidNum : {type: Number, default: 0},
     users : {type: Array},
-    lastPlayBack : {type: Number, default: 0}
-
+    lastPlayBack : {type: Number, default: 0},
+    usersInCall : {type: Array, default: []}
 });
 
 const SessionModel = mongoose.model('Sessions', Session);
