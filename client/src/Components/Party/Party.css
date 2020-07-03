@@ -30,8 +30,26 @@
     justify-content: center;
 }
 
+.audio-icons {
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+    padding-top: 20px;
+}
+.audio-btn {
+    font-size: 10px;
+}
 
+ .audio-btn-wrapper {
+    display: flex;
+    align-items: center;
+    width: 80%;
+}
 
+.audio-icon-wrapper {
+    display: flex;
+    flex-direction: row;
+} 
 
 .container {
     display: grid;
@@ -154,6 +172,13 @@ body {
 
 
   @media screen and (max-width: 1245px) {
+    .audio-icons {
+        display: flex;
+        flex-direction: row;
+        align-content: center;
+        padding-top: 
+        0px;
+    }
     .container {
        display: grid;
        grid-template-columns: repeat(10, 1fr);

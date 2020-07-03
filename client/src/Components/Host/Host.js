@@ -74,7 +74,7 @@ class Host extends Component {
         
     //https://syncin-server.herokuapp.com
     //http://localhost:5000
-        this.socket = io('http://localhost:5000')
+        this.socket = io('https://syncin-server.herokuapp.com')
     }
 
 
