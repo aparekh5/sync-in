@@ -15,14 +15,15 @@ The tech stack used to create this project was -
 * Reactjs (Front-end)
 
 To get the app running locally copy and paste the following code in your terminal
-`
+
+```
  cd client
  npm i
  npm start
  cd ../server
  npm i
  npm run dev
-`
+```
 
 Remeber to update the .env file
 
